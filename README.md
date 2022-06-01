@@ -21,6 +21,47 @@ $ docker-compose run web ./manage.py createsuperuser
 
 Для тонкой настройки Docker Compose используйте переменные окружения. Их названия отличаются от тех, что задаёт docker-образа, сделано это чтобы избежать конфликта имён. Внутри docker-compose.yaml настраиваются сразу несколько образов, у каждого свои переменные окружения, и поэтому их названия могут случайно пересечься. Чтобы не было конфликтов к названиям переменных окружения добавлены префиксы по названию сервиса. Список доступных переменных можно найти внутри файла [`docker-compose.yml`](./docker-compose.yml).
 
+
+## Как запустить dev-версию в Kubernetes
+Установите [kubectl](https://kubernetes.io/ru/docs/tasks/tools/install-kubectl/) и [minikube](https://kubernetes.io/ru/docs/tasks/tools/install-minikube/).
+Также подготовьте предварительно запущенную базу данных.
+
+Подготовьте minikube:
+```bash
+minikube start
+```
+
+Соберите образ django-бэкенда:
+```bash
+eval $(minikube docker-env) # для Linux
+minikube docker-env | Invoke-Expression # для Windows
+
+cd backend_main_django
+docker build -t django_app:{укажите версию} .
+docker tag django_app:{указанная версия} django_app:latest
+```
+
+Подготовьте окружение - создайте ConfigMap "django-conf" с переменными среды.
+Простейший способ это сделать - создать env-файл с переменными среды в формате `КЛЮЧ=ЗНАЧЕНИЕ`, а затем исполнить:
+```bash
+kubectl create configmap django-conf --from-env-file={ваш env-файл}
+```
+Если вам понадобится отредактировать созданный ConfigMap, то используйте:
+```bash
+kubectl edit configmap django-conf
+```
+
+Накатите деплой:
+```bash
+kubectl apply -f deploy.yml
+```
+
+Чтобы посмотреть адрес и порт запущенного сайта используйте:
+```
+kubectl get service django-service
+```
+
+
 ## Переменные окружения
 
 Образ с Django считывает настройки из переменных окружения:
