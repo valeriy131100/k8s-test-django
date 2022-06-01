@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: django-clearsessions
+spec:
+  containers:
+    - name: django-clearsessions
+      image: django_app:latest
+      imagePullPolicy: Never
+      command:
+        - python
+        - manage.py
+        - clearsessions
+      envFrom:
+        - configMapRef:
+            name: django-conf
+  restartPolicy: Never
+
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: django-clearsessions
+spec:
+  schedule: "0 0 * * 0"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: django-clearsessions
+            image: django_app:latest
+            imagePullPolicy: Never
+            command:
+            - python
+            - manage.py
+            - clearsessions
+            envFrom:
+            - configMapRef:
+                name: django-conf
+          restartPolicy: Never
