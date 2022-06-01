@@ -21,11 +21,11 @@ spec:
         ports:
         - containerPort: 80
         envFrom:
-          - configMapRef:
-              name: django-conf
+        - configMapRef:
+            name: django-conf
         env:
-          - name: ALLOWED_HOSTS
-            value: "starburger.test"
+        - name: ALLOWED_HOSTS
+          value: "starburger.test"
 
 ---
 
@@ -37,8 +37,8 @@ spec:
   selector:
     app: django
   ports:
-    - protocol: TCP
-      port: 80
+  - protocol: TCP
+    port: 80
   type: NodePort
 
 ---
