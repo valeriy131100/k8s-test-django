@@ -59,6 +59,16 @@ kubectl edit configmap django-conf
 kubectl apply -f deploy.yml
 ```
 
+Примените миграции базы данных:
+```bash
+kubectl create -f migrate.yml
+```
+
+Если это необходимо, то запустите еженедельную очистку сессий:
+```bash
+kubectl apply -f clearsessions.yml
+```
+
 Если вы запускаете minikube с помощью Docker и используете туннель для подключения, то добавьте следующее  в hosts-файл вашей системы (`/etc/hosts` на Linux и `C:\Windows\System32\drivers\etc` на Windows):
 ```
 127.0.0.1 starburger.test
