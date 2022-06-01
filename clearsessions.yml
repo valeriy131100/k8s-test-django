@@ -36,6 +36,7 @@ spec:
             - python
             - manage.py
             - clearsessions
+            - --noinput
             envFrom:
             - configMapRef:
                 name: django-conf
