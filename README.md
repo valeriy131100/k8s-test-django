@@ -23,14 +23,22 @@ $ docker-compose run web ./manage.py createsuperuser
 
 
 ## Как запустить dev-версию в Kubernetes
-Установите [kubectl](https://kubernetes.io/ru/docs/tasks/tools/install-kubectl/) и [minikube](https://kubernetes.io/ru/docs/tasks/tools/install-minikube/).
-Также подготовьте предварительно запущенную базу данных.
+Установите [kubectl](https://kubernetes.io/ru/docs/tasks/tools/install-kubectl/), [minikube](https://kubernetes.io/ru/docs/tasks/tools/install-minikube/) и [Helm](https://helm.sh).
 
 Подготовьте minikube:
 ```bash
 minikube start
 minikube addons enable ingress
 ```
+
+Создайте базу данных с помощью Helm:
+```bash
+helm install django-db bitnami/postgresql \
+     --set global.postgresql.auth.username={имя пользователя Postgres} \
+     --set global.postgresql.auth.password={пароль пользователя Postgres} \
+     --set global.postgresql.auth.database={название базы данных}
+```
+После установки Helm выдаст все необходимые данные для подключения к БД.
 
 Соберите образ django-бэкенда:
 ```bash
