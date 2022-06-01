@@ -29,6 +29,7 @@ $ docker-compose run web ./manage.py createsuperuser
 Подготовьте minikube:
 ```bash
 minikube start
+minikube addons enable ingress
 ```
 
 Соберите образ django-бэкенда:
@@ -41,11 +42,13 @@ docker build -t django_app:{укажите версию} .
 docker tag django_app:{указанная версия} django_app:latest
 ```
 
-Подготовьте окружение - создайте ConfigMap "django-conf" с переменными среды.
-Простейший способ это сделать - создать env-файл с переменными среды в формате `КЛЮЧ=ЗНАЧЕНИЕ`, а затем исполнить:
+Подготовьте окружение - создайте ConfigMap "django-conf" с переменными среды указанными ниже. Параметр `ALLOWED_HOSTS` указывать не нужно, он уже будет заполнен тестовым доменом - `starburger.test`. 
+
+Простейший способ создать ConfigMap - создать env-файл с переменными среды в формате `КЛЮЧ=ЗНАЧЕНИЕ`, а затем исполнить:
 ```bash
 kubectl create configmap django-conf --from-env-file={ваш env-файл}
 ```
+
 Если вам понадобится отредактировать созданный ConfigMap, то используйте:
 ```bash
 kubectl edit configmap django-conf
@@ -56,10 +59,17 @@ kubectl edit configmap django-conf
 kubectl apply -f deploy.yml
 ```
 
-Чтобы посмотреть адрес и порт запущенного сайта используйте:
+Если вы запускаете minikube с помощью Docker и используете туннель для подключения, то добавьте следующее  в hosts-файл вашей системы (`/etc/hosts` на Linux и `C:\Windows\System32\drivers\etc` на Windows):
 ```
-kubectl get service django-service
+127.0.0.1 starburger.test
 ```
+
+Иначе добавьте вывод следующей команды
+```bash
+echo "$(minikube ip) starburger.test"
+```
+
+Сервер будет доступен по адресу [http://starburger.test](http://starburger.test).
 
 
 ## Переменные окружения

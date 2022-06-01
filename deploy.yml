@@ -23,6 +23,9 @@ spec:
         envFrom:
           - configMapRef:
               name: django-conf
+        env:
+          - name: ALLOWED_HOSTS
+            value: "starburger.test"
 
 ---
 
@@ -36,4 +39,25 @@ spec:
   ports:
     - protocol: TCP
       port: 80
-  type: LoadBalancer
+  type: NodePort
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: django-ingress
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: "starburger.test"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: django-service
+            port:
+              number: 80
