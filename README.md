@@ -89,6 +89,17 @@ echo "$(minikube ip) starburger.test"
 
 Сервер будет доступен по адресу [http://starburger.test](http://starburger.test).
 
+### Создание суперпользователя
+
+Исполните следующую команду, чтобы получить список подов связанных с данным приложением:
+```bash
+kubectl get pod -l app=django
+```
+Скопируйте `NAME` любого из них, а затем исполните:
+```bash
+kubectl exec {скопированный NAME} -it -- python manage.py createsuperuser
+```
+Суперпользователь будет создан в обычном интерактивном режиме.
 
 ## Переменные окружения
 
